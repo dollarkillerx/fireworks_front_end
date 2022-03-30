@@ -9,6 +9,9 @@ export function getJWT() {
 
 export function setToken(token) {
   localStorage.setItem("AuthToken", token)
+
+
+  localStorage.setItem("UserName", getJWT().payload.name)
 }
 
 export function removeToken() {

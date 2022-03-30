@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import { getJWT } from '@/utils/auth'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -46,14 +47,27 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/agent',
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      path: 'agent',
+      name: 'Agent',
+      component: () => import('@/views/agent/index'),
+      meta: { title: 'Agent', icon: 'el-icon-s-promotion' }
     }]
   },
+
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/task',
+    children: [{
+      path: 'task',
+      name: 'Task',
+      component: () => import('@/views/task/index'),
+      meta: { title: 'Task', icon: 'el-icon-s-order' }
+    }]
+  },
+
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
@@ -69,6 +83,21 @@ const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
+  // let jwt = getJWT()
+  // if (jwt.payload.role === "admin") {
+  //   constantRoutes.push( {
+  //     path: '/',
+  //     component: Layout,
+  //     redirect: '/user',
+  //     children: [{
+  //       path: 'user',
+  //       name: 'User',
+  //       component: () => import('@/views/dashboard/index'),
+  //       meta: { title: 'User', icon: 'el-icon-s-custom' }
+  //     }]
+  //   })
+  // }
+  // console.log(constantRoutes)
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }

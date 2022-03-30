@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div style="text-align: center">
-      <h1>Rime 任务中心</h1>
+      <h1>任务中心</h1>
     </div>
 
     <el-descriptions class="margin-top" title="选择方法" :column="2" border>

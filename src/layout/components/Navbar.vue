@@ -7,7 +7,8 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="/favicon.png" class="user-avatar">
+          <p style="line-height: 25px;top: 0px">{{name}}</p>
+<!--          <img src="/go-logo-blue.svg" class="user-avatar">-->
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -39,6 +40,11 @@ import { removeToken } from '@/utils/auth'
 import router from '@/router'
 
 export default {
+  data(){
+    return {
+      name: localStorage.UserName,
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger

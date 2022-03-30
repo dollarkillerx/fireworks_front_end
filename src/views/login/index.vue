@@ -12,9 +12,9 @@
         </span>
         <el-input
           ref="account"
-          v-model="loginForm.account"
+          v-model="loginForm.email"
           placeholder="Email"
-          name="account"
+          name="email"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -69,11 +69,11 @@ export default {
     }
     return {
       loginForm: {
-        account: '',
+        email: '',
         password: ''
       },
       loginRules: {
-        account: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        email: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
