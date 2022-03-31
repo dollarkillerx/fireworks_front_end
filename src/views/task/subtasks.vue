@@ -11,7 +11,7 @@
         :data="subtasks"
         style="width: 100%">
       <el-table-column
-          label="TaskName">
+          label="Subtask Name">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.name }}</span>
         </template>
@@ -23,9 +23,21 @@
         </template>
       </el-table-column>
       <el-table-column
-          label="Token">
+          label="Action">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.token }}</span>
+          <span style="margin-left: 10px">{{ scope.row.action }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+          label="Branch OR Tag筛选">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.branch }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+          label="Agent">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.agent_name }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -42,7 +54,10 @@
 
       <el-table-column label="操作" width="300px">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">  <el-button type="primary"   @click="handleSubtasks(scope.$index, scope.row)">子任务</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="primary" style="margin-bottom: 10px"  @click="handleSubtasks(scope.$index, scope.row)">修改</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="primary"   @click="handleSubtasks(scope.$index, scope.row)">日志</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="success"   @click="handleSubtasks(scope.$index, scope.row)">重启</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="warning"   @click="handleSubtasks(scope.$index, scope.row)">停止</el-button> </span>
           <template v-if="scope.row.disabled">
             <span style="margin-left: 10px">  <el-button type="success"   @click="handleStatus(scope.$index, scope.row)">激活</el-button></span>
           </template>
@@ -142,6 +157,10 @@ export default {
         {
           name: "Merge",
           value: "merge_request"
+        },
+        {
+          name: "Push Or Merge",
+          value: "push_or_merge"
         }
       ]
     }
@@ -216,10 +235,17 @@ export default {
 
       console.log(this.subtask)
 
-      this.$http.get(`subtask/create`,this.subtask).then((response) => {
+      this.$http.post(`subtask/create`,this.subtask).then((response) => {
         console.log(response.data)
         if (response.data.code === "0") {
           this.subtasks = response.data.data
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          });
+          this.defaultSubtask()
+          this.loadData()
+          this.addSubtaskVisible = false
         } else {
           this.$alert(`错误: ${response.data.message}`, 'Error', {
             confirmButtonText: '确定',
@@ -230,8 +256,6 @@ export default {
           confirmButtonText: '确定',
         });
       })
-
-      this.defaultSubtask()
     }
   },
   watch: {
@@ -247,5 +271,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
