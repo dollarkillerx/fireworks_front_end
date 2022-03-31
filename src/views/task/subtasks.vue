@@ -54,10 +54,10 @@
 
       <el-table-column label="操作" width="300px">
         <template slot-scope="scope">
-          <span style="margin-left: 10px">  <el-button type="primary" style="margin-bottom: 10px"  @click="handleSubtasks(scope.$index, scope.row)">修改</el-button> </span>
-          <span style="margin-left: 10px">  <el-button type="primary"   @click="handleSubtasks(scope.$index, scope.row)">日志</el-button> </span>
-          <span style="margin-left: 10px">  <el-button type="success"   @click="handleSubtasks(scope.$index, scope.row)">重启</el-button> </span>
-          <span style="margin-left: 10px">  <el-button type="warning"   @click="handleSubtasks(scope.$index, scope.row)">停止</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="primary" style="margin-bottom: 10px"  @click="handleModify(scope.$index, scope.row)">修改</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="primary"   @click="handleLogs(scope.$index, scope.row)">日志</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="success"   @click="handleReboot(scope.$index, scope.row)">重启</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="warning"   @click="handleStop(scope.$index, scope.row)">停止</el-button> </span>
           <template v-if="scope.row.disabled">
             <span style="margin-left: 10px">  <el-button type="success"   @click="handleStatus(scope.$index, scope.row)">激活</el-button></span>
           </template>
@@ -125,10 +125,62 @@
         <el-button type="primary" @click="addSubtask">添加 子任务</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="修改子任务" :visible.sync="modifySubtaskVisible" width="90%">
+      <el-form ref="form" :model="modifySubtask" label-width="80px">
+        <el-form-item label="名称">
+          <el-input
+              type="text"
+              v-model="modifySubtask.name" :disabled="true">
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="Agent">
+          <el-input
+              type="text"
+              v-model="modifySubtask.agent_name" :disabled="true">
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="触发方式">
+          <el-input
+              type="text"
+              v-model="modifySubtask.action" :disabled="true">
+          </el-input>
+        </el-form-item>
+
+        <el-form-item :label="branchName">
+          <el-input
+              type="text"
+              v-model="modifySubtask.branch">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="指令">
+          <el-input
+              type="textarea"
+              :autosize="{ minRows: 4}"
+              v-model="modifySubtask.instruction">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input
+              type="text"
+              v-model="modifySubtask.description">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="modifySubtaskVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifySubtaskData">修改 子任务</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
+import router from "@/router";
+
 export default {
   name: "subtasks",
   data() {
@@ -138,10 +190,16 @@ export default {
       subtasks: [],
       branchName: "分支",
       addSubtaskVisible: false,
+      modifySubtaskVisible: false,
       subtask: {
         instruction:"",
         branch:"",
         action: "",
+      },
+      modifySubtask: {
+        instruction: "",
+        description: "",
+        branch: "",
       },
       agents: [],
       action: "",
@@ -255,6 +313,192 @@ export default {
         this.$alert('消息提交失败', 'Notice', {
           confirmButtonText: '确定',
         });
+      })
+    },
+    handleModify(idx,row) {
+      console.log(row)
+      if (row.action === "tag") {
+        this.branchName = "tag匹配"
+      }else {
+        this.branchName = "branch"
+      }
+
+      this.modifySubtask.name = row.name
+      this.modifySubtask.subtask_id = row.id
+      this.modifySubtask.agent_name = row.agent_name
+      this.modifySubtask.action = row.action
+      this.modifySubtask.branch = row.branch
+      this.modifySubtask.instruction = row.instruction
+      this.modifySubtask.description = row.description
+      this.modifySubtaskVisible = true
+    },
+    modifySubtaskData() {
+      this.$http.post(`subtask/update`,this.modifySubtask).then((response) => {
+        console.log(response.data)
+        if (response.data.code === "0") {
+          this.subtasks = response.data.data
+          this.$message({
+            type: 'success',
+            message: '修改!'
+          });
+          this.loadData()
+          this.modifySubtaskVisible = false
+        } else {
+          this.$alert(`错误: ${response.data.message}`, 'Error', {
+            confirmButtonText: '确定',
+          });
+        }
+      }).catch((error) => {
+        this.$alert('消息提交失败', 'Notice', {
+          confirmButtonText: '确定',
+        });
+      })
+    },
+    handleStatus(idx,row) {
+      console.log(row)
+      this.$confirm('是否更新状态', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post("subtask/disabled", {"subtask_id": row.id}).then((response) => {
+          console.log(response.data)
+          if (response.data.code === "0") {
+
+            this.$message({
+              type: 'success',
+              message: '更新成功!'
+            });
+
+            this.loadData()
+          } else {
+            this.$alert(`错误: ${response.data.message}`, 'Error', {
+              confirmButtonText: '确定',
+            });
+          }
+        }).catch((error) => {
+          this.$alert('消息提交失败', 'Notice', {
+            confirmButtonText: '确定',
+          });
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    handleDelete(idx,row) {
+      this.$confirm('是否删除', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post("subtask/delete", {"subtask_id": row.id}).then((response) => {
+          console.log(response.data)
+          if (response.data.code === "0") {
+
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+
+            this.loadData()
+          } else {
+            this.$alert(`错误: ${response.data.message}`, 'Error', {
+              confirmButtonText: '确定',
+            });
+          }
+        }).catch((error) => {
+          this.$alert('消息提交失败', 'Notice', {
+            confirmButtonText: '确定',
+          });
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    handleReboot(idx,row) {
+      this.$confirm('是否重启', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post("subtask/reboot", {"subtask_id": row.id}).then((response) => {
+          console.log(response.data)
+          if (response.data.code === "0") {
+
+            this.$message({
+              type: 'success',
+              message: '任务下发成功!'
+            });
+
+            this.loadData()
+          } else {
+            this.$alert(`错误: ${response.data.message}`, 'Error', {
+              confirmButtonText: '确定',
+            });
+          }
+        }).catch((error) => {
+          this.$alert('消息提交失败', 'Notice', {
+            confirmButtonText: '确定',
+          });
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    handleStop(idx,row) {
+      this.$confirm('是否停止服务', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post("subtask/stop", {"subtask_id": row.id}).then((response) => {
+          console.log(response.data)
+          if (response.data.code === "0") {
+
+            this.$message({
+              type: 'success',
+              message: '任务下发成功!'
+            });
+
+            this.loadData()
+          } else {
+            this.$alert(`错误: ${response.data.message}`, 'Error', {
+              confirmButtonText: '确定',
+            });
+          }
+        }).catch((error) => {
+          this.$alert('消息提交失败', 'Notice', {
+            confirmButtonText: '确定',
+          });
+        })
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    handleLogs(idx,row) {
+      router.push({
+        path: "logs", query: {
+          "subtask_id": row.id,
+          "subtask_name": row.name,
+          "task_id": row.task_id,
+          "task_name": this.taskName,
+        }
       })
     }
   },

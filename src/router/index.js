@@ -71,7 +71,26 @@ export const constantRoutes = [
                 hidden: true,
                 component: () => import('@/views/task/subtasks'),
                 meta: {title: 'Subtasks', icon: 'el-icon-s-order'}
-            }]
+            },
+            // {
+            //     path: 'logs_in',
+            //     name: 'Logs',
+            //     hidden: true,
+            //     component: () => import('@/views/task/logs'),
+            //     meta: {title: 'Logs', icon: 'el-icon-s-order'}
+            // }
+        ]
+    },
+    {
+        path: '/',
+        component: Layout,
+        redirect: '/logs',
+        children: [{
+            path: 'logs',
+            name: 'Logs',
+            component: () => import('@/views/task/logs'),
+            meta: {title: 'Logs', icon: 'el-icon-s-data'}
+        }]
     },
 
 

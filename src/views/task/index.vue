@@ -37,8 +37,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" width="300px">
+      <el-table-column label="操作" width="360px">
         <template slot-scope="scope">
+          <span style="margin-left: 10px">  <el-button type="primary" @click="handleLogs(scope.$index, scope.row)">日志</el-button> </span>
           <span style="margin-left: 10px">  <el-button type="primary" @click="handleSubtasks(scope.$index, scope.row)">子任务</el-button> </span>
           <template v-if="scope.row.disabled">
             <span style="margin-left: 10px">  <el-button type="success" @click="handleStatus(scope.$index, scope.row)">激活</el-button></span>
@@ -190,6 +191,14 @@ export default {
       console.log(row)
       router.push({
         path: "subtasks", query: {
+          "task_id": row.id,
+          "task_name": row.name,
+        }
+      })
+    },
+    handleLogs(idx,row) {
+      router.push({
+        path: "logs", query: {
           "task_id": row.id,
           "task_name": row.name,
         }
