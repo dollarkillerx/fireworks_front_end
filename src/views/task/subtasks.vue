@@ -57,7 +57,7 @@
           <span style="margin-left: 10px">  <el-button type="primary" style="margin-bottom: 10px"  @click="handleModify(scope.$index, scope.row)">修改</el-button> </span>
           <span style="margin-left: 10px">  <el-button type="primary"   @click="handleLogs(scope.$index, scope.row)">日志</el-button> </span>
           <span style="margin-left: 10px">  <el-button type="success"   @click="handleReboot(scope.$index, scope.row)">重启</el-button> </span>
-          <span style="margin-left: 10px">  <el-button type="warning"   @click="handleStop(scope.$index, scope.row)">停止</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="warning" style="margin-bottom: 10px"  @click="handleStop(scope.$index, scope.row)">停止</el-button> </span>
           <template v-if="scope.row.disabled">
             <span style="margin-left: 10px">  <el-button type="success"   @click="handleStatus(scope.$index, scope.row)">激活</el-button></span>
           </template>
@@ -65,6 +65,7 @@
             <span style="margin-left: 10px">  <el-button type="warning"   @click="handleStatus(scope.$index, scope.row)">禁用</el-button> </span>
           </template>
           <span style="margin-left: 10px">  <el-button type="danger"   @click="handleDelete(scope.$index, scope.row)">删除</el-button> </span>
+          <span style="margin-left: 10px">  <el-button type="primary"   @click="handleConfiguration(scope.$index, scope.row)">配置中心</el-button> </span>
         </template>
       </el-table-column>
     </el-table>
@@ -497,6 +498,16 @@ export default {
           "subtask_id": row.id,
           "subtask_name": row.name,
           "task_id": row.task_id,
+          "task_name": this.taskName,
+        }
+      })
+    },
+    handleConfiguration(idx,row) {
+      console.log(row)
+      router.push({
+        path: "/configuration", query: {
+          "subtask_id": row.id,
+          "subtask_name": row.name,
           "task_name": this.taskName,
         }
       })

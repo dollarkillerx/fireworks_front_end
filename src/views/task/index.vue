@@ -173,6 +173,7 @@ export default {
             });
           }
         }).catch((error) => {
+          console.log(error)
           this.$alert('消息提交失败', 'Notice', {
             confirmButtonText: '确定',
           });

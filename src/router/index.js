@@ -92,7 +92,32 @@ export const constantRoutes = [
             meta: {title: 'Logs', icon: 'el-icon-s-data'}
         }]
     },
-
+    {
+        path: '/',
+        component: Layout,
+        redirect: '/configuration',
+        children: [{
+            hidden: true,
+            path: 'configuration',
+            name: 'Configuration',
+            component: () => import('@/views/configuration/index'),
+            meta: {title: 'Configuration', icon: 'el-icon-date'}
+        },
+            {
+                hidden: true,
+                path: 'add_configuration',
+                name: 'AddConfiguration',
+                component: () => import('@/views/configuration/add'),
+                meta: {title: 'AddConfiguration', icon: 'el-icon-date'}
+            },
+            {
+                hidden: true,
+                path: 'modify_configuration',
+                name: 'ModifyConfiguration',
+                component: () => import('@/views/configuration/modify'),
+                meta: {title: 'ModifyConfiguration', icon: 'el-icon-date'}
+            }]
+    },
 
     // 404 page must be placed at the end !!!
     {path: '*', redirect: '/404', hidden: true}

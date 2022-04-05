@@ -17,6 +17,10 @@ import '@/permission' // permission control
 
 import http from "@/http";
 
+import VueCodeMirror from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
+Vue.use(VueCodeMirror);
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
