@@ -41,6 +41,12 @@
         </template>
       </el-table-column>
       <el-table-column
+          label="ConfigurationToken">
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">{{ scope.row.token }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
           label="状态">
         <template slot-scope="scope">
           <template v-if="scope.row.disabled">
